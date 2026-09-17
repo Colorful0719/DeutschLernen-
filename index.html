@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeutschLernen - 德文基礎學習手冊</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#1e293b',
+              red: '#e11d48',
+              gold: '#f59e0b',
+              accent: '#3b82f6',
+            },
+            de: {
+              der: '#2563eb', // 陽性 masculine (藍)
+              die: '#e11d48', // 陰性 feminine (紅)
+              das: '#059669', // 中性 neuter (綠)
+              pl: '#d97706'   // 複數 plural (橘)
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 1rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('alphabet')">
+        <div class="flex flex-col w-7 h-5 rounded overflow-hidden shadow-sm border border-slate-200">
+          <div class="bg-black flex-1"></div>
+          <div class="bg-red-600 flex-1"></div>
+          <div class="bg-amber-400 flex-1"></div>
+        </div>
+        <div>
+          <span class="font-bold text-lg text-slate-900 tracking-tight">Deutsch<span class="text-amber-500">Lernen</span></span>
+          <span class="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full font-medium">德文入門基地</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1 sm:space-x-2">
+        <button onclick="switchTab('alphabet')" id="tab-btn-alphabet" class="nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition-all text-blue-600 bg-blue-50">
+          <i class="fa-solid fa-font mr-1.5"></i>拼音與發音
+        </button>
+        <button onclick="switchTab('directions')" id="tab-btn-directions" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+          <i class="fa-solid fa-signs-post mr-1.5"></i>問路專區
+        </button>
+        <button onclick="switchTab('vocab')" id="tab-btn-vocab" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+          <i class="fa-solid fa-book-bookmark mr-1.5"></i>主題認識字
+        </button>
+        <button onclick="switchTab('dialogue')" id="tab-btn-dialogue" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+          <i class="fa-solid fa-comments mr-1.5"></i>日常會話
+        </button>
+        <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+          <i class="fa-solid fa-circle-question mr-1.5"></i>隨堂測驗
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Audio Speed Control & Voice Status Bar -->
+  <aside class="bg-white border-b border-slate-200 py-2 px-4 text-xs text-slate-600">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-volume-high text-amber-500"></i>
+        <span>真人德語合成發音 (Web Speech API)</span>
+        <span id="speech-support-badge" class="px-1.5 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 font-bold rounded">支援就緒</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2">
+          <label for="playbackRate" class="font-medium">朗讀速度：</label>
+          <select id="playbackRate" class="bg-slate-50 border border-slate-200 rounded px-2 py-0.5 text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <option value="0.75">0.75x (慢速初學)</option>
+            <option value="0.9" selected>0.9x (標準推薦)</option>
+            <option value="1.0">1.0x (原速自然)</option>
+          </select>
+        </div>
+        <button onclick="testSpeech()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded text-slate-700 font-medium transition">
+          <i class="fa-solid fa-play mr-1"></i>試聽 "Hallo!"
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: 拼音與發音 (Phonics & Alphabet) -->
+    <!-- ========================================================================= -->
+    <section id="tab-alphabet" class="space-y-8 block">
+      <!-- Banner Intro -->
+      <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-800 text-white rounded-2xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs font-semibold uppercase tracking-wider mb-2">德語發音特點</span>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">德文字母與發音規則</h1>
+          <p class="mt-2 text-slate-200 text-sm sm:text-base leading-relaxed">
+            德語是「怎麼寫就怎麼讀」的拼音語言！掌握 26 個基礎字母與 4 個特殊字母（變音 Ä, Ö, Ü 及雙 s 字母 ß），再認識常見複合雙母音，就能輕鬆唸出 90% 以上的單字。
+          </p>
+        </div>
+        <div class="absolute right-0 bottom-0 opacity-10 text-9xl font-black select-none pointer-events-none pr-6">
+          AÄB
+        </div>
+      </div>
+
+      <!-- Quick Filter for Alphabet & Rules -->
+      <div class="flex border-b border-slate-200 gap-4">
+        <button onclick="switchAlphabetSub('table')" id="sub-btn-table" class="pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600">
+          <i class="fa-solid fa-table-cells mr-1.5"></i>德文字母發音表 (課堂同款表格)
+        </button>
+        <button onclick="switchAlphabetSub('letters')" id="sub-btn-letters" class="pb-3 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent">
+          <i class="fa-solid fa-id-card mr-1.5"></i>詳細例詞卡片
+        </button>
+        <button onclick="switchAlphabetSub('rules')" id="sub-btn-rules" class="pb-3 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent">
+          <i class="fa-solid fa-book-open-reader mr-1.5"></i>關鍵複合發音規則
+        </button>
+      </div>
+
+      <!-- Sub-section: Classroom Table (Identical to User's Whiteboard Photo) -->
+      <div id="sub-table" class="block space-y-4">
+        <div class="flex items-center justify-between">
+          <p class="text-xs sm:text-sm text-slate-600">
+            <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i>對照課堂投影表設計，<strong>點擊任意字母格</strong>即可立即真人發音：
+          </p>
+          <div class="hidden sm:flex items-center gap-3 text-xs">
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-sky-200 border border-sky-400"></span> 26 基礎字母</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-orange-200 border border-orange-400"></span> 變音與 ß (Umlaut & ß)</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-3 sm:p-5 border border-slate-300 shadow-sm overflow-x-auto">
+          <div class="text-center font-bold text-lg text-slate-800 pb-3 border-b border-slate-200 mb-3 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-chalkboard-user text-blue-600"></i>德文字母發音表
+          </div>
+          <!-- 6-column Grid matching classroom layout -->
+          <div id="classroom-phonetic-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-2.5 min-w-[340px]">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-section: Letters Grid -->
+      <div id="sub-letters" class="hidden">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-xs sm:text-sm text-slate-600">點擊字母方塊可聆聽德語讀音與範例單字：</p>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="inline-block w-3 h-3 rounded-full bg-amber-100 border border-amber-400"></span>
+            <span>德語特有字母 (Umlaut & Eszett)</span>
+          </div>
+        </div>
+
+        <div id="alphabet-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+          <!-- Dynamic Alphabet Items Injected Here -->
+        </div>
+      </div>
+
+      <!-- Sub-section: Phonics Rules -->
+      <div id="sub-rules" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xl font-bold text-blue-600">ei vs. ie</span>
+              <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">常見易混雙母音</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">記住看「後面的字母」決定發音：</p>
+            <div class="space-y-2">
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-blue-50" onclick="speakGerman('mein, Wein, eins')">
+                <div>
+                  <strong class="text-slate-800">ei</strong> 讀作注音 [ㄞ] (類似英文 eye)
+                  <p class="text-xs text-slate-500">例：mein (我的), Wein (葡萄酒), eins (一)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-blue-500 text-sm"></i>
+              </div>
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-blue-50" onclick="speakGerman('sie, die, Liebe')">
+                <div>
+                  <strong class="text-slate-800">ie</strong> 讀作長音 [ㄧ:] (類似英文 ee)
+                  <p class="text-xs text-slate-500">例：sie (她/他們), die (冠詞), Liebe (愛)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-blue-500 text-sm"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xl font-bold text-indigo-600">eu / äu</span>
+              <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">雙母音</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">兩者發音完全相同，讀作 [歐以 / oy]：</p>
+            <div class="space-y-2">
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-indigo-50" onclick="speakGerman('heute, Euro, Freund')">
+                <div>
+                  <strong class="text-slate-800">eu</strong> 讀作 [oy] (如 toy 的 oy)
+                  <p class="text-xs text-slate-500">例：heute (今天), Euro (歐元), Freund (朋友)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-indigo-500 text-sm"></i>
+              </div>
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-indigo-50" onclick="speakGerman('Häuser, Fräulein')">
+                <div>
+                  <strong class="text-slate-800">äu</strong> 讀作 [oy]
+                  <p class="text-xs text-slate-500">例：Häuser (房屋複數), Fräulein (小姐)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-indigo-500 text-sm"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xl font-bold text-amber-600">ch (Ich-Laut vs Ach-Laut)</span>
+              <span class="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded font-medium">德語特色氣音</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">依照前面跟隨的母音位置而有軟硬氣音變化：</p>
+            <div class="space-y-2">
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-amber-50" onclick="speakGerman('ich, nicht, möchten')">
+                <div>
+                  <strong class="text-slate-800">前舌軟氣音</strong> 在 e, i, ä, ö, ü 後面 (類似噓氣聲)
+                  <p class="text-xs text-slate-500">例：ich (我), nicht (不), möchten (想要)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-amber-600 text-sm"></i>
+              </div>
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-amber-50" onclick="speakGerman('Bach, Buch, machen')">
+                <div>
+                  <strong class="text-slate-800">後喉吐氣音</strong> 在 a, o, u, au 後面 (後喉摩擦音)
+                  <p class="text-xs text-slate-500">例：Bach (小溪/巴哈), Buch (書), machen (做)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-amber-600 text-sm"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xl font-bold text-rose-600">sch / sp / st</span>
+              <span class="text-xs bg-rose-50 text-rose-700 px-2 py-0.5 rounded font-medium">子音組合</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">在字首時，sp 與 st 會自動帶有「sh (ㄕ)」音：</p>
+            <div class="space-y-2">
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-rose-50" onclick="speakGerman('Schule, schön, Deutsch')">
+                <div>
+                  <strong class="text-slate-800">sch</strong> 讀作 [ʃ] (中文的「ㄕ」)
+                  <p class="text-xs text-slate-500">例：Schule (學校), schön (美麗), Deutsch (德語)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-rose-500 text-sm"></i>
+              </div>
+              <div class="p-2.5 rounded bg-slate-50 flex items-center justify-between cursor-pointer hover:bg-rose-50" onclick="speakGerman('sprechen, spielen, Stadt, Straße')">
+                <div>
+                  <strong class="text-slate-800">sp / st (字首)</strong> 讀作 [ʃp]「施玻」 / [ʃt]「施德」
+                  <p class="text-xs text-slate-500">例：sprechen (說話), Stadt (城市), Straße (街道)</p>
+                </div>
+                <i class="fa-solid fa-volume-high text-rose-500 text-sm"></i>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB: 問路與方位指引專區 (Directions & Navigation) -->
+    <!-- ========================================================================= -->
+    <section id="tab-directions" class="space-y-8 hidden">
+      <!-- Directions Banner -->
+      <div class="bg-gradient-to-r from-teal-700 via-emerald-700 to-slate-800 text-white rounded-2xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs font-semibold uppercase tracking-wider mb-2">旅遊實用必備</span>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Nach dem Weg fragen (德語問路全攻略)</h1>
+          <p class="mt-2 text-slate-200 text-sm sm:text-base leading-relaxed">
+            在德國旅行不迷路！掌握「禮貌開頭詢問」、「核心方向方位詞（直走、左轉、右轉）」以及「常見地標設施」三大要素，就能輕鬆問出正確方向。
+          </p>
+        </div>
+        <div class="absolute right-3 bottom-0 opacity-10 text-9xl font-black select-none pointer-events-none pr-4">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+      </div>
+
+      <!-- Quick Direction Visual Signs -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center cursor-pointer hover:border-emerald-500 hover:shadow transition group" onclick="speakGerman('geradeaus')">
+          <div class="w-10 h-10 mx-auto rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg mb-2 group-hover:bg-emerald-600 group-hover:text-white transition">
+            <i class="fa-solid fa-arrow-up"></i>
+          </div>
+          <h4 class="font-extrabold text-slate-900 text-base">geradeaus</h4>
+          <p class="text-xs text-slate-500 font-medium">直走 (一直往前)</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center cursor-pointer hover:border-emerald-500 hover:shadow transition group" onclick="speakGerman('nach links')">
+          <div class="w-10 h-10 mx-auto rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-lg mb-2 group-hover:bg-blue-600 group-hover:text-white transition">
+            <i class="fa-solid fa-arrow-left"></i>
+          </div>
+          <h4 class="font-extrabold text-slate-900 text-base">nach links</h4>
+          <p class="text-xs text-slate-500 font-medium">向左轉 / 在左邊</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center cursor-pointer hover:border-emerald-500 hover:shadow transition group" onclick="speakGerman('nach rechts')">
+          <div class="w-10 h-10 mx-auto rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-lg mb-2 group-hover:bg-amber-600 group-hover:text-white transition">
+            <i class="fa-solid fa-arrow-right"></i>
+          </div>
+          <h4 class="font-extrabold text-slate-900 text-base">nach rechts</h4>
+          <p class="text-xs text-slate-500 font-medium">向右轉 / 在右邊</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 text-center cursor-pointer hover:border-emerald-500 hover:shadow transition group" onclick="speakGerman('in der Nähe')">
+          <div class="w-10 h-10 mx-auto rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-lg mb-2 group-hover:bg-purple-600 group-hover:text-white transition">
+            <i class="fa-solid fa-location-crosshairs"></i>
+          </div>
+          <h4 class="font-extrabold text-slate-900 text-base">in der Nähe</h4>
+          <p class="text-xs text-slate-500 font-medium">在附近 / 不遠處</p>
+        </div>
+      </div>
+
+      <!-- Essential Direction Asking Sentences -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-sm">
+        <h3 class="text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-bullhorn text-emerald-600"></i> 問路實用萬用句型 (點擊單句發音)
+        </h3>
+        <p class="text-xs text-slate-500 mb-5">熟背這幾句，在德國街頭或車站隨時開口不怯場！</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="direction-phrases-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Direction Landmarks & Facilities Cards -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-sm">
+        <h3 class="text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-landmark text-teal-600"></i> 問路必備地標單字 (附性別冠詞)
+        </h3>
+        <p class="text-xs text-slate-500 mb-5">問路常詢問的地標建築與交通樞紐：</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="direction-landmarks-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: 認識字與閃卡 (Vocabulary & Flashcards) -->
+    <!-- ========================================================================= -->
+    <section id="tab-vocab" class="space-y-6 hidden">
+      <!-- Vocabulary Header & Concept Guide -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">基礎主題單字庫 (Wortschatz)</h2>
+          <p class="text-sm text-slate-500 mt-1">德語名詞第一字母永遠<strong class="text-slate-800">大寫</strong>，且必有性別（陽性、陰性、中性）！</p>
+        </div>
+        <!-- Gender Legend Indicators -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <span class="w-2 h-2 rounded-full bg-blue-600 mr-1.5"></span> der 陽性
+          </span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full font-bold bg-rose-50 text-rose-700 border border-rose-200">
+            <span class="w-2 h-2 rounded-full bg-rose-600 mr-1.5"></span> die 陰性
+          </span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 mr-1.5"></span> das 中性
+          </span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full font-bold bg-amber-50 text-amber-700 border border-amber-200">
+            <span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></span> die 複數
+          </span>
+        </div>
+      </div>
+
+      <!-- Controls: Category selection, Search, and Flashcard mode toggle -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <!-- Category Buttons -->
+        <div class="flex flex-wrap gap-2" id="vocab-category-buttons">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="flex items-center space-x-2 w-full sm:w-auto">
+          <div class="relative flex-1 sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="vocab-search" placeholder="搜尋德文或中文..." oninput="filterVocab()" class="w-full pl-8 pr-3 py-1.5 bg-white text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- View Toggle (Grid List vs Flip Card) -->
+          <div class="flex bg-slate-200 p-0.5 rounded-lg text-xs font-semibold">
+            <button id="view-mode-grid" onclick="setVocabMode('grid')" class="px-3 py-1.5 rounded-md bg-white text-slate-800 shadow-sm transition">
+              <i class="fa-solid fa-table-cells-large mr-1"></i>清單
+            </button>
+            <button id="view-mode-flashcard" onclick="setVocabMode('flashcard')" class="px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition">
+              <i class="fa-solid fa-id-card-clip mr-1"></i>閃卡
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Cards View -->
+      <div id="vocab-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Vocab cards injected dynamically -->
+      </div>
+
+      <!-- Flashcard Interactive Study Mode (Hidden by default) -->
+      <div id="vocab-flashcard-container" class="hidden flex flex-col items-center justify-center py-6">
+        <div class="w-full max-w-md h-72 perspective-1000">
+          <div id="active-flashcard" class="flip-card w-full h-full cursor-pointer" onclick="toggleFlashcardFlip()">
+            <div class="flip-card-inner shadow-lg border border-slate-200">
+              <!-- Front Side -->
+              <div id="flashcard-front" class="flip-card-front bg-white p-8">
+                <span id="fc-gender-tag" class="px-3 py-1 text-xs rounded-full font-bold mb-4 bg-blue-100 text-blue-700">der</span>
+                <h3 id="fc-word" class="text-3xl font-extrabold text-slate-900 mb-2">Kaffee</h3>
+                <p id="fc-plural" class="text-sm text-slate-400 mb-6">Pl: -</p>
+                <div class="flex items-center text-xs text-slate-400">
+                  <i class="fa-solid fa-hand-pointer mr-1.5"></i>點擊翻面查看中文釋義與例句
+                </div>
+              </div>
+              <!-- Back Side -->
+              <div id="flashcard-back" class="flip-card-back bg-gradient-to-br from-slate-900 to-slate-800 text-white p-8">
+                <span class="text-xs uppercase tracking-wider text-amber-400 font-bold mb-2">中文釋義</span>
+                <h4 id="fc-translation" class="text-2xl font-bold mb-3">咖啡</h4>
+                <p id="fc-example" class="text-sm text-slate-300 italic mb-4">"Ein Kaffee, bitte!"</p>
+                <p id="fc-example-zh" class="text-xs text-slate-400 mb-4">(請給我一杯咖啡！)</p>
+                <button onclick="event.stopPropagation(); speakCurrentFlashcard();" class="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs flex items-center gap-1.5 transition">
+                  <i class="fa-solid fa-volume-high"></i> 再次發音
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flashcard Controls -->
+        <div class="flex items-center justify-center gap-6 mt-6">
+          <button onclick="prevFlashcard()" class="p-3 bg-white hover:bg-slate-100 text-slate-700 rounded-full shadow border border-slate-200 transition">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <span id="flashcard-counter" class="text-sm font-semibold text-slate-600">1 / 10</span>
+          <button onclick="nextFlashcard()" class="p-3 bg-white hover:bg-slate-100 text-slate-700 rounded-full shadow border border-slate-200 transition">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: 日常實用對話 (Daily Dialogues) -->
+    <!-- ========================================================================= -->
+    <section id="tab-dialogue" class="space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">情境實用對話 (Praktische Dialoge)</h2>
+          <p class="text-sm text-slate-500 mt-1">選取情境，點擊句首語音鍵可逐句聆聽，或使用全對話連續播放。</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="toggle-translation-btn" onclick="toggleDialogueTranslations()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition">
+            <i class="fa-solid fa-language mr-1"></i>切換中文翻譯顯示
+          </button>
+        </div>
+      </div>
+
+      <!-- Dialogue Scenario Picker Tabs -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="dialogue-selector-container">
+        <!-- Dialogue Scenario buttons injected here -->
+      </div>
+
+      <!-- Active Dialogue Conversation Box -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7">
+        <!-- Dialogue Title & Autoplay Bar -->
+        <div class="flex flex-wrap items-center justify-between pb-4 mb-6 border-b border-slate-100 gap-3">
+          <div>
+            <span id="dialogue-tag" class="px-2.5 py-0.5 text-xs bg-indigo-50 text-indigo-700 rounded-full font-semibold">初次見面</span>
+            <h3 id="dialogue-heading" class="text-xl font-bold text-slate-900 mt-1">Sich vorstellen (自我介紹)</h3>
+          </div>
+          <button id="play-full-dialogue-btn" onclick="playCurrentDialogueAll()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-xs sm:text-sm font-semibold shadow hover:opacity-95 transition flex items-center gap-2">
+            <i class="fa-solid fa-circle-play"></i>
+            <span>播放完整對話</span>
+          </button>
+        </div>
+
+        <!-- Conversation Bubbles Feed -->
+        <div id="dialogue-messages-feed" class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: 隨堂實戰小測驗 (Practice Quiz) -->
+    <!-- ========================================================================= -->
+    <section id="tab-quiz" class="space-y-6 hidden">
+      <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm max-w-2xl mx-auto">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">德語能力小檢測</h2>
+            <p class="text-xs text-slate-500 mt-0.5">測試你的名詞性別(der/die/das)、發音與對話理解力！</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400">目前分數</span>
+            <div id="quiz-score-badge" class="text-lg font-extrabold text-blue-600">0 / 5</div>
+          </div>
+        </div>
+
+        <!-- Question View -->
+        <div id="quiz-content-area">
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span id="quiz-step-text">題目 1 of 5</span>
+            <span id="quiz-category-tag" class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded">性別判斷</span>
+          </div>
+
+          <h3 id="quiz-question-title" class="text-lg font-bold text-slate-800 mb-4 leading-relaxed">
+            請問德語中「蘋果 (Apfel)」的定冠詞是哪一個？
+          </h3>
+
+          <div id="quiz-audio-cue" class="mb-4 hidden">
+            <button onclick="playQuizPromptAudio()" class="px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-amber-100 transition">
+              <i class="fa-solid fa-volume-high"></i> 點擊聆聽題目語音
+            </button>
+          </div>
+
+          <div id="quiz-options-list" class="space-y-2.5 mb-6">
+            <!-- Quiz option buttons rendered via JS -->
+          </div>
+
+          <!-- Feedback Box -->
+          <div id="quiz-feedback-box" class="hidden p-4 rounded-xl text-sm font-medium mb-4">
+            <!-- Feedback explanation -->
+          </div>
+
+          <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow transition">
+            下一題 <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
+        </div>
+
+        <!-- Completed Screen -->
+        <div id="quiz-completed-area" class="hidden text-center py-8">
+          <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-900 mb-2">測驗完成！Sehr gut!</h3>
+          <p id="quiz-final-summary" class="text-slate-600 text-sm mb-6">你答對了 5 題中的 5 題！</p>
+          <button onclick="restartQuiz()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm shadow transition">
+            <i class="fa-solid fa-rotate-right mr-1.5"></i>重新測驗
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-slate-700">DeutschLernen</span>
+        <span>• 初學者友善德語互動平台</span>
+      </div>
+      <div>
+        <span>提示：名詞冠詞記憶法 — 藍色(der)、紅色(die)、綠色(das)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC & DATASETS -->
+  <!-- ========================================================================= -->
+  <script>
+    /* Alphabet Dataset (Classroom exact phonetic matching photo) */
+    const ALPHABET_DATA = [
+      { letter: 'A a', chartSound: 'ah', sound: '[a:]', example: 'Apfel', trans: '蘋果', note: '發音如注音「ㄚ」' },
+      { letter: 'B b', chartSound: 'beh', sound: '[be:]', example: 'Buch', trans: '書本', note: '字尾時無聲化為 [p]' },
+      { letter: 'C c', chartSound: 'tseh', sound: '[tse:]', example: 'Café', trans: '咖啡館', note: '多見於外來語' },
+      { letter: 'D d', chartSound: 'deh', sound: '[de:]', example: 'Danke', trans: '謝謝', note: '字尾時無聲化為 [t]' },
+      { letter: 'E e', chartSound: 'eh', sound: '[e:]', example: 'Elefant', trans: '大象', note: '非重音在字尾讀輕音 [ə]' },
+      { letter: 'F f', chartSound: 'eff', sound: '[ɛf]', example: 'Freund', trans: '朋友', note: '同英文 F' },
+      { letter: 'G g', chartSound: 'geh', sound: '[ge:]', example: 'Guten Tag', trans: '你好', note: '字尾時無聲化為 [k]' },
+      { letter: 'H h', chartSound: 'ha', sound: '[ha:]', example: 'Hallo', trans: '哈囉', note: '在母音後不發音，僅延長母音' },
+      { letter: 'I i', chartSound: 'ee', sound: '[i:]', example: 'Igel', trans: '刺蝟', note: '發音如「ㄧ」' },
+      { letter: 'J j', chartSound: 'yot', sound: '[jɔt]', example: 'Ja', trans: '是的', note: '讀作半母音 [j] (類似英文 y)' },
+      { letter: 'K k', chartSound: 'kah', sound: '[ka:]', example: 'Katze', trans: '貓', note: '清脆送氣音' },
+      { letter: 'L l', chartSound: 'ell', sound: '[ɛl]', example: 'Liebe', trans: '愛', note: '舌尖頂住上排門牙後背' },
+      { letter: 'M m', chartSound: 'emm', sound: '[ɛm]', example: 'Mutter', trans: '母親', note: '雙唇閉合鼻音' },
+      { letter: 'N n', chartSound: 'enn', sound: '[ɛn]', example: 'Nein', trans: '不是/不', note: '舌尖頂住上牙齦' },
+      { letter: 'O o', chartSound: 'oh', sound: '[o:]', example: 'Oma', trans: '奶奶', note: '嘴型圓潤「ㄛ」' },
+      { letter: 'P p', chartSound: 'peh', sound: '[pe:]', example: 'Park', trans: '公園', note: '雙唇爆破音' },
+      { letter: 'Q q', chartSound: 'kuh', sound: '[ku:]', example: 'Quelle', trans: '泉源/來源', note: '德語中必伴隨 u (qu 讀 [kv])' },
+      { letter: 'R r', chartSound: 'err', sound: '[ɛr]', example: 'Rot', trans: '紅色', note: '小舌顫音或喉小舌音' },
+      { letter: 'S s', chartSound: 'ess', sound: '[ɛs]', example: 'Sonne', trans: '太陽', note: '母音前發濁音 [z]，字尾發清音 [s]' },
+      { letter: 'T t', chartSound: 'teh', sound: '[te:]', example: 'Tag', trans: '日子/白天', note: '齒齦爆破音' },
+      { letter: 'U u', chartSound: 'uh', sound: '[u:]', example: 'Uhr', trans: '鐘錶/點鐘', note: '圓唇後母音「ㄨ」' },
+      { letter: 'V v', chartSound: 'fow', sound: '[faʊ]', example: 'Vater', trans: '父親', note: '德語原生字讀作 [f]！' },
+      { letter: 'W w', chartSound: 'veh', sound: '[ve:]', example: 'Wasser', trans: '水', note: '讀作濁音 [v] (非英文 w)' },
+      { letter: 'X x', chartSound: 'iks', sound: '[ɪks]', example: 'Taxi', trans: '計程車', note: '讀作 [ks]' },
+      { letter: 'Y y', chartSound: 'upsilon', sound: '[ˈʏpsilɔn]', example: 'Yoga', trans: '瑜珈', note: '多讀作 [y] 或 [j]' },
+      { letter: 'Z z', chartSound: 'tsett', sound: '[tsɛt]', example: 'Zug', trans: '火車', note: '一律讀作「擦音 [ts]」(刺)' },
+      { letter: 'Ä ä', chartSound: 'ah Umlaut', sound: '[ɛ:]', example: 'Äpfel', trans: '蘋果(複數)', note: '嘴唇張大發如「ㄝ」', special: true },
+      { letter: 'Ö ö', chartSound: 'oh Umlaut', sound: '[ø:]', example: 'Öl', trans: '油', note: '嘴唇圓圓嘟起發「ㄝ」音', special: true },
+      { letter: 'Ü ü', chartSound: 'uh Umlaut', sound: '[y:]', example: 'Über', trans: '在…之上', note: '嘴唇吹口哨型發「ㄧ」音', special: true },
+      { letter: 'ß', chartSound: 'ess-testt', sound: '[ɛsˈtsɛt]', example: 'Straße', trans: '街道', note: '雙重 s 音，永遠發清音 [s]', special: true }
+    ];
+
+    /* Direction Sentences & Landmarks Data */
+    const DIRECTION_PHRASES = [
+      { de: 'Entschuldigung, wie komme ich zum Bahnhof?', zh: '不好意思，請問我要怎麼去火車站？', note: '最通用的禮貌問路開頭句' },
+      { de: 'Wo ist die nächste U-Bahn-Station?', zh: '請問最近的地鐵站在哪裡？', note: '搭乘大眾運輸必備' },
+      { de: 'Gehen Sie bitte immer geradeaus.', zh: '請您一直往前直走。', note: '最常見的指路回答' },
+      { de: 'Biegen Sie an der Kreuzung nach links ab.', zh: '請在十字路口向左轉。', note: '轉彎指令' },
+      { de: 'Biegen Sie an der Ampel nach rechts ab.', zh: '請在紅綠燈處向右轉。', note: '轉彎指令' },
+      { de: 'Ist es weit von hier?', zh: '離這裡會很遠嗎？', note: '確認步行或搭車距離' },
+      { de: 'Nein, es ist gleich um die Ecke.', zh: '不遠，就在轉角處而已。', note: '附近方位' },
+      { de: 'Es ist auf der rechten Seite.', zh: '它在右手邊。', note: '終點位置指引' }
+    ];
+
+    const DIRECTION_LANDMARKS = [
+      { gender: 'der', word: 'Bahnhof', zh: '火車站', plural: 'Bahnhöfe' },
+      { gender: 'der', word: 'Hauptbahnhof', zh: '中央火車站', plural: 'Hauptbahnhöfe' },
+      { gender: 'die', word: 'U-Bahn', zh: '地鐵/捷運', plural: '-en' },
+      { gender: 'die', word: 'Haltestelle', zh: '公車站/站牌', plural: '-n' },
+      { gender: 'die', word: 'Straße', zh: '街道', plural: '-n' },
+      { gender: 'die', word: 'Kreuzung', zh: '十字路口', plural: '-en' },
+      { gender: 'die', word: 'Ampel', zh: '紅綠燈', plural: '-n' },
+      { gender: 'das', word: 'Zentrum', zh: '市中心', plural: 'Zentren' },
+      { gender: 'die', word: 'Apotheke', zh: '藥局', plural: '-n' },
+      { gender: 'das', word: 'Krankenhaus', zh: '醫院', plural: 'Krankenhäuser' },
+      { gender: 'der', word: 'Flughafen', zh: '機場', plural: 'Flughäfen' },
+      { gender: 'der', word: 'Supermarkt', zh: '超級市場', plural: 'Supermärkte' }
+    ];
+
+    /* Vocabulary Dataset */
+    const VOCAB_DATA = [
+      // Greetings & Basics
+      { id: 1, category: 'greetings', gender: 'none', word: 'Hallo', plural: '', trans: '你好 / 哈囉', example: 'Hallo, wie geht es dir?', exZh: '你好，你好嗎？' },
+      { id: 2, category: 'greetings', gender: 'none', word: 'Guten Morgen', plural: '', trans: '早安', example: 'Guten Morgen, allerseits!', exZh: '大家早安！' },
+      { id: 3, category: 'greetings', gender: 'none', word: 'Guten Tag', plural: '', trans: '你好 / 日安', example: 'Guten Tag, Herr Müller!', exZh: '日安，穆勒先生！' },
+      { id: 4, category: 'greetings', gender: 'none', word: 'Gute Nacht', plural: '', trans: '晚安 (睡前)', example: 'Schlaf gut, gute Nacht!', exZh: '睡個好覺，晚安！' },
+      { id: 5, category: 'greetings', gender: 'none', word: 'Danke schön', plural: '', trans: '非常感謝', example: 'Vielen Dank für Ihre Hilfe!', exZh: '非常感謝您的幫忙！' },
+      { id: 6, category: 'greetings', gender: 'none', word: 'Bitte', plural: '', trans: '請 / 不客氣', example: 'Bitte sehr!', exZh: '十分不客氣！' },
+      { id: 7, category: 'greetings', gender: 'none', word: 'Tschüss', plural: '', trans: '再見 (非正式)', example: 'Tschüss, bis morgen!', exZh: '掰掰，明天見！' },
+      { id: 8, category: 'greetings', gender: 'none', word: 'Auf Wiedersehen', plural: '', trans: '再見 (正式/客氣)', example: 'Auf Wiedersehen und schönen Tag!', exZh: '祝您有美好的一天，再見！' },
+
+      // Directions & Transport (問路與交通)
+      { id: 29, category: 'directions', gender: 'der', word: 'Weg', plural: '-e', trans: '路 / 路線', example: 'Können Sie mir den Weg zeigen?', exZh: '您可以為我指路嗎？' },
+      { id: 30, category: 'directions', gender: 'none', word: 'geradeaus', plural: '', trans: '一直直走', example: 'Gehen Sie bitte geradeaus.', exZh: '請一直往前走。' },
+      { id: 31, category: 'directions', gender: 'none', word: 'links', plural: '', trans: '向左 / 左邊', example: 'Nach links abbiegen.', exZh: '向左轉。' },
+      { id: 32, category: 'directions', gender: 'none', word: 'rechts', plural: '', trans: '向右 / 右邊', example: 'Auf der rechten Seite.', exZh: '在右手邊。' },
+      { id: 33, category: 'directions', gender: 'die', word: 'Kreuzung', plural: '-en', trans: '十字路口', example: 'An der Kreuzung halten.', exZh: '在十字路口停下。' },
+      { id: 34, category: 'directions', gender: 'die', word: 'Ampel', plural: '-n', trans: '紅綠燈', example: 'Die Ampel ist rot.', exZh: '紅綠燈是紅燈。' },
+      { id: 35, category: 'directions', gender: 'die', word: 'U-Bahn', plural: '-en', trans: '地鐵', example: 'Ich fahre mit der U-Bahn.', exZh: '我搭地鐵去。' },
+
+      // Food & Cafe
+      { id: 9, category: 'food', gender: 'der', word: 'Kaffee', plural: '-s', trans: '咖啡', example: 'Ich möchte einen Kaffee.', exZh: '我想要一杯咖啡。' },
+      { id: 10, category: 'food', gender: 'der', word: 'Tee', plural: '-s', trans: '茶', example: 'Möchtest du schwarzen Tee?', exZh: '你想要紅茶嗎？' },
+      { id: 11, category: 'food', gender: 'das', word: 'Wasser', plural: '-', trans: '水', example: 'Ein Glas Wasser, bitte.', exZh: '請給我一杯水。' },
+      { id: 12, category: 'food', gender: 'das', word: 'Brot', plural: '-e', trans: '麵包', example: 'Das deutsche Brot ist lecker.', exZh: '德國麵包非常美味。' },
+      { id: 13, category: 'food', gender: 'das', word: 'Bier', plural: '-e', trans: '啤酒', example: 'Ein Bier aus München.', exZh: '一杯來自慕尼黑的啤酒。' },
+      { id: 14, category: 'food', gender: 'die', word: 'Wurst', plural: 'Würste', trans: '香腸', example: 'Currywurst ist sehr berühmt.', exZh: '咖哩香腸非常有名。' },
+      { id: 15, category: 'food', gender: 'der', word: 'Apfel', plural: 'Äpfel', trans: '蘋果', example: 'Ein Apfel am Tag hält den Arzt fern.', exZh: '一天一蘋果，醫生遠離我。' },
+      { id: 16, category: 'food', gender: 'die', word: 'Milch', plural: '-', trans: '牛奶', example: 'Kaffee mit Milch und Zucker.', exZh: '加牛奶與糖的咖啡。' },
+
+      // Numbers
+      { id: 17, category: 'numbers', gender: 'none', word: 'eins', plural: '', trans: '1 (一)', example: 'Eins, zwei, drei!', exZh: '一、二、三！' },
+      { id: 18, category: 'numbers', gender: 'none', word: 'zwei', plural: '', trans: '2 (二)', example: 'Zwei Tassen Kaffee.', exZh: '兩杯咖啡。' },
+      { id: 19, category: 'numbers', gender: 'none', word: 'drei', plural: '', trans: '3 (三)', example: 'Drei Euro, bitte.', exZh: '請付三歐元。' },
+      { id: 20, category: 'numbers', gender: 'none', word: 'vier', plural: '', trans: '4 (四)', example: 'Zimmer Nummer vier.', exZh: '四號房間。' },
+      { id: 21, category: 'numbers', gender: 'none', word: 'fünf', plural: '', trans: '5 (五)', example: 'Es ist fünf Uhr.', exZh: '現在是五點鐘。' },
+      { id: 22, category: 'numbers', gender: 'none', word: 'zehn', plural: '', trans: '10 (十)', example: 'Zehn Minuten Pause.', exZh: '休息十分鐘。' },
+      { id: 23, category: 'numbers', gender: 'none', word: 'zwanzig', plural: '', trans: '20 (二十)', example: 'Zwanzig Euro.', exZh: '二十歐元。' },
+
+      // Daily Objects & Places
+      { id: 24, category: 'daily', gender: 'das', word: 'Buch', plural: 'Bücher', trans: '書本', example: 'Ich lese ein deutsches Buch.', exZh: '我正在讀一本德文名著。' },
+      { id: 25, category: 'daily', gender: 'die', word: 'Straße', plural: '-n', trans: '街道', example: 'Wo ist die Goethe-Straße?', exZh: '歌德街在哪裡？' },
+      { id: 26, category: 'daily', gender: 'der', word: 'Bahnhof', plural: 'Bahnhöfe', trans: '火車站', example: 'Der Hauptbahnhof ist groß.', exZh: '中央火車站很大。' },
+      { id: 27, category: 'daily', gender: 'das', word: 'Hotel', plural: '-s', trans: '飯店', example: 'Das Hotel ist im Zentrum.', exZh: '飯店位在市中心。' },
+      { id: 28, category: 'daily', gender: 'die', word: 'Stadt', plural: 'Städte', trans: '城市', example: 'Berlin ist eine tolle Stadt.', exZh: '柏林是一座超讚的城市。' }
+    ];
+
+    const DIALOGUES = [
+      {
+        id: 'directions',
+        title: 'Nach dem Weg fragen (問路指南)',
+        tag: '旅行必備',
+        description: '在路上找不到中央火車站時，如何禮貌向路人詢問方向。',
+        lines: [
+          { speaker: 'Tourist', role: 'A', text: 'Entschuldigung! Können Sie mir helfen?', zh: '不好意思！您能幫我個忙嗎？' },
+          { speaker: 'Passant', role: 'B', text: 'Ja, natürlich! Was suchen Sie?', zh: '好的，當然！你在找什麼呢？' },
+          { speaker: 'Tourist', role: 'A', text: 'Wo ist der Hauptbahnhof?', zh: '請問中央火車站是在哪裡？' },
+          { speaker: 'Passant', role: 'B', text: 'Gehen Sie geradeaus und dann an der Ampel nach links.', zh: '請一直往前走，然後在紅綠燈處向左轉。' },
+          { speaker: 'Tourist', role: 'A', text: 'Ist es weit von hier?', zh: '離這裡會很遠嗎？' },
+          { speaker: 'Passant', role: 'B', text: 'Nein, nur fünf Minuten zu Fuß. Es ist auf der rechten Seite.', zh: '不會，走路只要五分鐘。它就在右手邊。' },
+          { speaker: 'Tourist', role: 'A', text: 'Vielen Dank! Schönen Tag noch!', zh: '非常感謝您！祝您今天愉快！' },
+          { speaker: 'Passant', role: 'B', text: 'Bitte sehr! Auf Wiedersehen!', zh: '不客氣！再見！' }
+        ]
+      },
+      {
+        id: 'intro',
+        title: 'Sich vorstellen (自我介紹)',
+        tag: '社交基礎',
+        description: '在語言學校或派對上初次遇見新朋友時的基礎寒暄。',
+        lines: [
+          { speaker: 'Anna', role: 'A', text: 'Hallo! Ich heiße Anna. Wie heißt du?', zh: '你好！我叫安娜。你叫什麼名字？' },
+          { speaker: 'Lukas', role: 'B', text: 'Hallo Anna! Ich bin Lukas. Freut mich!', zh: '你好安娜！我是盧卡斯。很高興認識你！' },
+          { speaker: 'Anna', role: 'A', text: 'Freut mich auch! Woher kommst du, Lukas?', zh: '我也很高興認識你！盧卡斯，你來自哪裡呢？' },
+          { speaker: 'Lukas', role: 'B', text: 'Ich komme aus Deutschland. Und du?', zh: '我來自德國。那你呢？' },
+          { speaker: 'Anna', role: 'A', text: 'Ich komme aus Taiwan. Ich lerne jetzt Deutsch.', zh: '我來自台灣。我現在正在學德文。' },
+          { speaker: 'Lukas', role: 'B', text: 'Super! Dein Deutsch ist schon sehr gut!', zh: '太棒了！你的德文已經非常好了！' }
+        ]
+      },
+      {
+        id: 'cafe',
+        title: 'Im Café bestellen (咖啡館點餐)',
+        tag: '生活飲食',
+        description: '在德國維也納或柏林的咖啡廳，點一杯咖啡與甜點。',
+        lines: [
+          { speaker: 'Kellner', role: 'A', text: 'Guten Tag! Was möchten Sie bestellen?', zh: '日安！您想要點些什麼呢？' },
+          { speaker: 'Gast', role: 'B', text: 'Guten Tag! Ich hätte gerne einen Cappuccino, bitte.', zh: '日安！請給我一杯卡布奇諾。' },
+          { speaker: 'Kellner', role: 'A', text: 'Sehr gerne. Möchten Sie auch etwas essen?', zh: '好的。您也想吃點什麼嗎？' },
+          { speaker: 'Gast', role: 'B', text: 'Ja, ein Stück Apfelkuchen, bitte.', zh: '是的，請給我一塊蘋果派蛋糕。' },
+          { speaker: 'Kellner', role: 'A', text: 'Alles klar. Zusammen macht das 6 Euro 50.', zh: '沒問題。總共是 6 歐元 50 分。' },
+          { speaker: 'Gast', role: 'B', text: 'Hier sind 7 Euro. Stimmt so, danke!', zh: '這裡是 7 歐元。不用找了（當小費），謝謝！' }
+        ]
+      }
+    ];
+
+    /* Quiz Dataset */
+    const QUIZ_DATA = [
+      {
+        category: '問路實用語句',
+        question: '當路上好心人指路時對你說「Gehen Sie bitte geradeaus!」，意思是：',
+        audioCue: 'Gehen Sie bitte geradeaus',
+        options: ['請您向左轉', '請您向右轉', '請您一直往前走 (直走)', '請您在此稍候'],
+        answer: 2,
+        explain: 'geradeaus 是德語中「直走」的意思。'
+      },
+      {
+        category: '字母讀音對照 (課堂發音表)',
+        question: '在德文字母發音表中，德語字母「W w」的讀音應為：',
+        audioCue: 'W',
+        options: ['double-u', 'veh', 'fow', 'err'],
+        answer: 1,
+        explain: '德語的 W 發 [veh] 音；而 V 才是發 [fow] 音。'
+      },
+      {
+        category: '變音字母 (Umlaut)',
+        question: '字母「Ä ä」在課堂發音表中的讀音標記為何？',
+        audioCue: 'Ä',
+        options: ['ah Umlaut', 'oh Umlaut', 'uh Umlaut', 'ess-testt'],
+        answer: 0,
+        explain: 'Ä 是 a 的變音，讀音標記為「ah Umlaut」。'
+      },
+      {
+        category: '名詞冠詞判斷',
+        question: '請問德語中「火車站 (Bahnhof)」的定冠詞是哪一個？',
+        audioCue: 'der Bahnhof',
+        options: ['der', 'die', 'das', 'den'],
+        answer: 0,
+        explain: 'Bahnhof 是陽性名詞，定冠詞為 der (der Bahnhof)。'
+      },
+      {
+        category: '發音拼讀規則',
+        question: '請問德語單字「mein」(我的) 當中的複合母音 "ei" 發音類似於：',
+        audioCue: 'mein',
+        options: ['英文的 "ee" (伊)', '中文注音的 [ㄞ] (愛)', '中文注音的 [ㄛ] (喔)', '英文的 "ay" (欸)'],
+        answer: 1,
+        explain: '"ei" 永遠發 [ai] (ㄞ) 音；而 "ie" 才是發長音 [i:] (伊)。'
+      }
+    ];
+
+    /* State Management */
+    let currentCategory = 'all';
+    let vocabViewMode = 'grid';
+    let activeFlashcardIdx = 0;
+    let filteredVocabList = [...VOCAB_DATA];
+    let showTranslations = true;
+    let currentDialogueId = 'directions';
+    let quizCurrentIndex = 0;
+    let quizScore = 0;
+
+    /* Speech Synthesis Helper */
+    function speakGerman(text, onEndCallback = null) {
+      if (!('speechSynthesis' in window)) {
+        console.warn('Speech synthesis not supported');
+        return;
+      }
+
+      window.speechSynthesis.cancel(); // cancel previous active queue
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'de-DE';
+      
+      const speedSelect = document.getElementById('playbackRate');
+      utterance.rate = speedSelect ? parseFloat(speedSelect.value) : 0.9;
+      utterance.pitch = 1.0;
+
+      if (onEndCallback) {
+        utterance.onend = onEndCallback;
+        utterance.onerror = onEndCallback;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function testSpeech() {
+      speakGerman('Hallo! Willkommen beim Deutschlernen!');
+    }
+
+    // Check voice support on load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderClassroomGrid();
+      renderAlphabet();
+      renderDirectionModule();
+      renderVocabCategoryButtons();
+      renderVocabCards();
+      setupFlashcard();
+      renderDialogueSelectors();
+      renderCurrentDialogue();
+      loadQuizQuestion();
+    });
+
+    /* Tab Switching */
+    function switchTab(tabName) {
+      const tabs = ['alphabet', 'directions', 'vocab', 'dialogue', 'quiz'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          if (el) {
+            el.classList.remove('hidden');
+            el.classList.add('block');
+          }
+          if (btn) btn.className = 'nav-btn px-3 py-2 rounded-lg text-sm font-semibold transition-all text-blue-600 bg-blue-50';
+        } else {
+          if (el) {
+            el.classList.remove('block');
+            el.classList.add('hidden');
+          }
+          if (btn) btn.className = 'nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all';
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* Alphabet Tab Functions */
+    function switchAlphabetSub(sub) {
+      const tableEl = document.getElementById('sub-table');
+      const lettersEl = document.getElementById('sub-letters');
+      const rulesEl = document.getElementById('sub-rules');
+      const btnTable = document.getElementById('sub-btn-table');
+      const btnLetters = document.getElementById('sub-btn-letters');
+      const btnRules = document.getElementById('sub-btn-rules');
+
+      [tableEl, lettersEl, rulesEl].forEach(el => el.classList.add('hidden'));
+      [btnTable, btnLetters, btnRules].forEach(btn => {
+        btn.className = 'pb-3 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent';
+      });
+
+      if (sub === 'table') {
+        tableEl.classList.remove('hidden');
+        btnTable.className = 'pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600';
+      } else if (sub === 'letters') {
+        lettersEl.classList.remove('hidden');
+        btnLetters.className = 'pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600';
+      } else {
+        rulesEl.classList.remove('hidden');
+        btnRules.className = 'pb-3 text-sm font-bold border-b-2 border-blue-600 text-blue-600';
+      }
+    }
+
+    /* Render Classroom Grid (Exact Reproduction of User's Photo) */
+    function renderClassroomGrid() {
+      const grid = document.getElementById('classroom-phonetic-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      ALPHABET_DATA.forEach(item => {
+        const isSpecial = item.special;
+        const cell = document.createElement('div');
+        
+        // Match table colors in photo: Blue for A-Z, Peach/Orange for Ä, Ö, Ü, ß
+        if (isSpecial) {
+          cell.className = "border border-orange-300 rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:scale-[1.02] transition cursor-pointer group bg-orange-100/70";
+        } else {
+          cell.className = "border border-sky-300 rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:scale-[1.02] transition cursor-pointer group bg-sky-100/70";
+        }
+
+        cell.onclick = () => speakGerman(item.letter.split(' ')[0]);
+
+        cell.innerHTML = `
+          <div class="py-2 px-1 text-center font-bold text-slate-900 text-base sm:text-lg border-b ${isSpecial ? 'border-orange-200 bg-orange-200/50' : 'border-sky-200 bg-sky-200/50'} flex items-center justify-center gap-2">
+            <span>${item.letter}</span>
+            <i class="fa-solid fa-volume-high text-[11px] text-slate-400 group-hover:text-blue-600 transition"></i>
+          </div>
+          <div class="py-2 px-1 text-center text-xs sm:text-sm font-semibold text-slate-700">
+            ${item.chartSound}
+          </div>
+        `;
+        grid.appendChild(cell);
+      });
+    }
+
+    function renderAlphabet() {
+      const container = document.getElementById('alphabet-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      ALPHABET_DATA.forEach(item => {
+        const card = document.createElement('div');
+        const isSpecial = item.special;
+        card.className = `group bg-white rounded-xl p-4 border ${isSpecial ? 'border-amber-300 bg-amber-50/40' : 'border-slate-200'} shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between`;
+        card.onclick = () => speakGerman(`${item.letter}, ${item.example}`);
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-2xl font-black ${isSpecial ? 'text-amber-600' : 'text-slate-800'} group-hover:text-blue-600 transition">${item.letter}</span>
+              <span class="ml-2 px-2 py-0.5 rounded text-[11px] font-semibold ${isSpecial ? 'bg-orange-100 text-orange-800' : 'bg-blue-50 text-blue-700'}">${item.chartSound}</span>
+            </div>
+            <button class="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center text-slate-500 text-xs transition">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+          </div>
+          <div class="mt-2">
+            <div class="flex items-baseline space-x-1.5">
+              <span class="font-bold text-slate-900 text-sm">${item.example}</span>
+              <span class="text-xs text-slate-500">(${item.trans})</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">${item.note}</p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* Render Direction Section Elements */
+    function renderDirectionModule() {
+      const phrasesContainer = document.getElementById('direction-phrases-list');
+      if (phrasesContainer) {
+        phrasesContainer.innerHTML = '';
+        DIRECTION_PHRASES.forEach(p => {
+          const item = document.createElement('div');
+          item.className = "p-3.5 bg-slate-50 rounded-xl border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/30 transition cursor-pointer flex items-center justify-between group";
+          item.onclick = () => speakGerman(p.de);
+
+          item.innerHTML = `
+            <div class="pr-3">
+              <div class="font-bold text-slate-800 text-sm group-hover:text-emerald-700 transition flex items-center gap-1.5">
+                <span>${p.de}</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5">${p.zh}</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">${p.note}</p>
+            </div>
+            <button class="w-7 h-7 rounded-full bg-white shadow-xs group-hover:bg-emerald-600 group-hover:text-white text-slate-400 text-xs flex items-center justify-center transition flex-shrink-0">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+          `;
+          phrasesContainer.appendChild(item);
+        });
+      }
+
+      const landmarksContainer = document.getElementById('direction-landmarks-list');
+      if (landmarksContainer) {
+        landmarksContainer.innerHTML = '';
+        DIRECTION_LANDMARKS.forEach(lm => {
+          const card = document.createElement('div');
+          card.className = "bg-slate-50/80 p-3 rounded-xl border border-slate-200 hover:border-teal-400 hover:bg-teal-50/40 transition cursor-pointer flex flex-col justify-between";
+          card.onclick = () => speakGerman(`${lm.gender} ${lm.word}`);
+
+          let badgeColor = 'bg-blue-100 text-blue-700 border-blue-200';
+          if (lm.gender === 'die') badgeColor = 'bg-rose-100 text-rose-700 border-rose-200';
+          if (lm.gender === 'das') badgeColor = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between mb-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeColor}">${lm.gender}</span>
+              <i class="fa-solid fa-volume-low text-xs text-slate-400"></i>
+            </div>
+            <div>
+              <h5 class="font-bold text-slate-900 text-sm">${lm.word}</h5>
+              <p class="text-xs text-slate-500">${lm.zh}</p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-1.5 pt-1 border-t border-slate-200/60">複數: die ${lm.word}${lm.plural}</span>
+          `;
+          landmarksContainer.appendChild(card);
+        });
+      }
+    }
+
+    /* Vocab Tab Functions */
+    const CATEGORIES = [
+      { id: 'all', name: '全部單字' },
+      { id: 'directions', name: '問路與交通' },
+      { id: 'greetings', name: '問候與禮貌' },
+      { id: 'food', name: '食物與餐飲' },
+      { id: 'numbers', name: '數字 1-20' },
+      { id: 'daily', name: '生活與城市' }
+    ];
+
+    function renderVocabCategoryButtons() {
+      const container = document.getElementById('vocab-category-buttons');
+      container.innerHTML = '';
+      CATEGORIES.forEach(cat => {
+        const btn = document.createElement('button');
+        const isActive = cat.id === currentCategory;
+        btn.className = `px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+          isActive 
+            ? 'bg-slate-800 text-white shadow' 
+            : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+        }`;
+        btn.innerText = cat.name;
+        btn.onclick = () => {
+          currentCategory = cat.id;
+          renderVocabCategoryButtons();
+          filterVocab();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function filterVocab() {
+      const searchVal = document.getElementById('vocab-search').value.toLowerCase().trim();
+      filteredVocabList = VOCAB_DATA.filter(item => {
+        const matchesCat = currentCategory === 'all' || item.category === currentCategory;
+        const matchesSearch = 
+          item.word.toLowerCase().includes(searchVal) || 
+          item.trans.toLowerCase().includes(searchVal) ||
+          item.example.toLowerCase().includes(searchVal);
+        return matchesCat && matchesSearch;
+      });
+
+      renderVocabCards();
+      activeFlashcardIdx = 0;
+      setupFlashcard();
+    }
+
+    function getGenderBadge(gender) {
+      if (gender === 'der') {
+        return `<span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-100 text-blue-800 border border-blue-200">der (陽性)</span>`;
+      } else if (gender === 'die') {
+        return `<span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-100 text-rose-800 border border-rose-200">die (陰性)</span>`;
+      } else if (gender === 'das') {
+        return `<span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">das (中性)</span>`;
+      }
+      return '';
+    }
+
+    function renderVocabCards() {
+      const container = document.getElementById('vocab-grid-container');
+      container.innerHTML = '';
+
+      if (filteredVocabList.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400">
+            <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+            <p>找不到符合條件的德文單字</p>
+          </div>
+        `;
+        return;
+      }
+
+      filteredVocabList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition flex flex-col justify-between";
+        
+        let displayWord = item.word;
+        if (item.gender !== 'none') {
+          displayWord = `<span class="text-slate-400 font-normal mr-1">${item.gender}</span>${item.word}`;
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div>${getGenderBadge(item.gender)}</div>
+              <button onclick="speakGerman('${item.gender !== 'none' ? item.gender + ' ' : ''}${item.word}')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-500 text-xs flex items-center justify-center transition">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+            <h4 class="text-lg font-bold text-slate-900">${displayWord}</h4>
+            <p class="text-sm font-medium text-slate-600 mt-0.5">${item.trans}</p>
+            ${item.plural ? `<p class="text-xs text-slate-400 mt-0.5">複數: die ${item.word}${item.plural}</p>` : ''}
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 bg-slate-50/60 p-2.5 rounded-lg cursor-pointer hover:bg-blue-50/50 transition" onclick="speakGerman('${item.example}')">
+            <div class="flex items-center justify-between text-xs text-slate-700 font-medium">
+              <span>"${item.example}"</span>
+              <i class="fa-solid fa-volume-low text-slate-400"></i>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">${item.exZh}</p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* Flashcard Mode Logic */
+    function setVocabMode(mode) {
+      vocabViewMode = mode;
+      const gridContainer = document.getElementById('vocab-grid-container');
+      const fcContainer = document.getElementById('vocab-flashcard-container');
+      const btnGrid = document.getElementById('view-mode-grid');
+      const btnFc = document.getElementById('view-mode-flashcard');
+
+      if (mode === 'grid') {
+        gridContainer.classList.remove('hidden');
+        fcContainer.classList.add('hidden');
+        btnGrid.className = 'px-3 py-1.5 rounded-md bg-white text-slate-800 shadow-sm transition';
+        btnFc.className = 'px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition';
+      } else {
+        gridContainer.classList.add('hidden');
+        fcContainer.classList.remove('hidden');
+        btnFc.className = 'px-3 py-1.5 rounded-md bg-white text-slate-800 shadow-sm transition';
+        btnGrid.className = 'px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition';
+        setupFlashcard();
+      }
+    }
+
+    function toggleFlashcardFlip() {
+      const card = document.getElementById('active-flashcard');
+      card.classList.toggle('flipped');
+    }
+
+    function setupFlashcard() {
+      if (filteredVocabList.length === 0) return;
+      const card = document.getElementById('active-flashcard');
+      card.classList.remove('flipped'); // reset flip status
+
+      const item = filteredVocabList[activeFlashcardIdx];
+      const genderTag = document.getElementById('fc-gender-tag');
+      const wordEl = document.getElementById('fc-word');
+      const pluralEl = document.getElementById('fc-plural');
+      const transEl = document.getElementById('fc-translation');
+      const exEl = document.getElementById('fc-example');
+      const exZhEl = document.getElementById('fc-example-zh');
+      const counterEl = document.getElementById('flashcard-counter');
+
+      if (item.gender === 'none') {
+        genderTag.classList.add('hidden');
+      } else {
+        genderTag.classList.remove('hidden');
+        genderTag.innerText = item.gender;
+        if (item.gender === 'der') genderTag.className = 'px-3 py-1 text-xs rounded-full font-bold mb-4 bg-blue-100 text-blue-700';
+        if (item.gender === 'die') genderTag.className = 'px-3 py-1 text-xs rounded-full font-bold mb-4 bg-rose-100 text-rose-700';
+        if (item.gender === 'das') genderTag.className = 'px-3 py-1 text-xs rounded-full font-bold mb-4 bg-emerald-100 text-emerald-700';
+      }
+
+      wordEl.innerText = item.word;
+      pluralEl.innerText = item.plural ? `Plural: die ${item.word}${item.plural}` : '';
+      transEl.innerText = item.trans;
+      exEl.innerText = `"${item.example}"`;
+      exZhEl.innerText = item.exZh;
+      counterEl.innerText = `${activeFlashcardIdx + 1} / ${filteredVocabList.length}`;
+      
+      // Auto speak word upon showing
+      speakGerman(`${item.gender !== 'none' ? item.gender + ' ' : ''}${item.word}`);
+    }
+
+    function nextFlashcard() {
+      if (activeFlashcardIdx < filteredVocabList.length - 1) {
+        activeFlashcardIdx++;
+      } else {
+        activeFlashcardIdx = 0;
+      }
+      setupFlashcard();
+    }
+
+    function prevFlashcard() {
+      if (activeFlashcardIdx > 0) {
+        activeFlashcardIdx--;
+      } else {
+        activeFlashcardIdx = filteredVocabList.length - 1;
+      }
+      setupFlashcard();
+    }
+
+    function speakCurrentFlashcard() {
+      const item = filteredVocabList[activeFlashcardIdx];
+      speakGerman(`${item.example}`);
+    }
+
+    /* Dialogue Tab Functions */
+    function renderDialogueSelectors() {
+      const container = document.getElementById('dialogue-selector-container');
+      container.innerHTML = '';
+
+      DIALOGUES.forEach(d => {
+        const isCurrent = d.id === currentDialogueId;
+        const btn = document.createElement('button');
+        btn.className = `text-left p-4 rounded-xl border transition ${
+          isCurrent 
+            ? 'bg-blue-50/70 border-blue-500 shadow-sm' 
+            : 'bg-white border-slate-200 hover:border-slate-300'
+        }`;
+        btn.onclick = () => {
+          currentDialogueId = d.id;
+          renderDialogueSelectors();
+          renderCurrentDialogue();
+        };
+
+        btn.innerHTML = `
+          <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${isCurrent ? 'bg-blue-200 text-blue-800' : 'bg-slate-100 text-slate-600'} mb-1">${d.tag}</span>
+          <h4 class="font-bold text-sm text-slate-900 line-clamp-1">${d.title}</h4>
+          <p class="text-xs text-slate-500 mt-1 line-clamp-1">${d.description}</p>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function renderCurrentDialogue() {
+      const dialogue = DIALOGUES.find(d => d.id === currentDialogueId);
+      if (!dialogue) return;
+
+      document.getElementById('dialogue-tag').innerText = dialogue.tag;
+      document.getElementById('dialogue-heading').innerText = dialogue.title;
+
+      const feed = document.getElementById('dialogue-messages-feed');
+      feed.innerHTML = '';
+
+      dialogue.lines.forEach((line, idx) => {
+        const isSpeakerA = line.role === 'A';
+        const msg = document.createElement('div');
+        msg.className = `flex items-start gap-3 ${isSpeakerA ? '' : 'flex-row-reverse'} group`;
+        msg.id = `dialogue-line-${idx}`;
+
+        msg.innerHTML = `
+          <div class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-xs shadow-sm ${
+            isSpeakerA 
+              ? 'bg-gradient-to-tr from-blue-600 to-indigo-500 text-white' 
+              : 'bg-gradient-to-tr from-amber-500 to-rose-500 text-white'
+          }">
+            ${line.speaker.substring(0, 2)}
+          </div>
+          <div class="max-w-[85%] sm:max-w-[75%] space-y-1">
+            <div class="flex items-center gap-2 ${isSpeakerA ? '' : 'justify-end'}">
+              <span class="text-xs font-semibold text-slate-600">${line.speaker}</span>
+              <button onclick="speakGerman('${line.text}')" class="text-slate-400 hover:text-blue-600 text-xs transition p-1" title="單句發音">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+            <div class="p-3.5 rounded-2xl ${
+              isSpeakerA 
+                ? 'bg-slate-100 text-slate-800 rounded-tl-sm' 
+                : 'bg-blue-600 text-white rounded-tr-sm'
+            } shadow-sm">
+              <p class="text-sm font-semibold tracking-wide">${line.text}</p>
+              <p class="dialogue-zh-text text-xs mt-1 ${isSpeakerA ? 'text-slate-500' : 'text-blue-100'} ${showTranslations ? 'block' : 'hidden'}">
+                ${line.zh}
+              </p>
+            </div>
+          </div>
+        `;
+        feed.appendChild(msg);
+      });
+    }
+
+    function toggleDialogueTranslations() {
+      showTranslations = !showTranslations;
+      const zhElements = document.querySelectorAll('.dialogue-zh-text');
+      zhElements.forEach(el => {
+        if (showTranslations) {
+          el.classList.remove('hidden');
+          el.classList.add('block');
+        } else {
+          el.classList.remove('block');
+          el.classList.add('hidden');
+        }
+      });
+    }
+
+    function playCurrentDialogueAll() {
+      const dialogue = DIALOGUES.find(d => d.id === currentDialogueId);
+      if (!dialogue) return;
+
+      const playBtn = document.getElementById('play-full-dialogue-btn');
+      playBtn.disabled = true;
+      playBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 正在播放中...`;
+
+      let lineIndex = 0;
+
+      function playNext() {
+        if (lineIndex < dialogue.lines.length) {
+          // Highlight active line
+          document.querySelectorAll('#dialogue-messages-feed > div').forEach(el => el.classList.remove('ring-2', 'ring-blue-400', 'rounded-2xl'));
+          const currentLineEl = document.getElementById(`dialogue-line-${lineIndex}`);
+          if (currentLineEl) {
+            currentLineEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            currentLineEl.classList.add('ring-2', 'ring-blue-400', 'rounded-2xl');
+          }
+
+          speakGerman(dialogue.lines[lineIndex].text, () => {
+            lineIndex++;
+            setTimeout(playNext, 600); // 600ms gap between dialogue turns
+          });
+        } else {
+          // Finished
+          document.querySelectorAll('#dialogue-messages-feed > div').forEach(el => el.classList.remove('ring-2', 'ring-blue-400', 'rounded-2xl'));
+          playBtn.disabled = false;
+          playBtn.innerHTML = `<i class="fa-solid fa-circle-play"></i> 播放完整對話`;
+        }
+      }
+
+      playNext();
+    }
+
+    /* Quiz Logic */
+    function loadQuizQuestion() {
+      const q = QUIZ_DATA[quizCurrentIndex];
+      document.getElementById('quiz-step-text').innerText = `題目 ${quizCurrentIndex + 1} of ${QUIZ_DATA.length}`;
+      document.getElementById('quiz-category-tag').innerText = q.category;
+      document.getElementById('quiz-question-title').innerText = q.question;
+
+      const audioCueBox = document.getElementById('quiz-audio-cue');
+      if (q.audioCue) {
+        audioCueBox.classList.remove('hidden');
+      } else {
+        audioCueBox.classList.add('hidden');
+      }
+
+      const optionsList = document.getElementById('quiz-options-list');
+      optionsList.innerHTML = '';
+
+      // Reset feedback and Next button
+      const feedbackBox = document.getElementById('quiz-feedback-box');
+      feedbackBox.classList.add('hidden');
+      document.getElementById('quiz-next-btn').classList.add('hidden');
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 transition font-semibold text-slate-700 text-sm flex items-center justify-between";
+        btn.innerHTML = `
+          <span>${String.fromCharCode(65 + idx)}. ${opt}</span>
+          <i class="fa-regular fa-circle text-slate-300"></i>
+        `;
+        btn.onclick = () => selectQuizOption(idx);
+        optionsList.appendChild(btn);
+      });
+    }
+
+    function playQuizPromptAudio() {
+      const q = QUIZ_DATA[quizCurrentIndex];
+      if (q.audioCue) {
+        speakGerman(q.audioCue);
+      }
+    }
+
+    function selectQuizOption(selectedIdx) {
+      const q = QUIZ_DATA[quizCurrentIndex];
+      const optionButtons = document.querySelectorAll('#quiz-options-list button');
+
+      // Disable all options after answering
+      optionButtons.forEach(btn => btn.disabled = true);
+
+      const isCorrect = selectedIdx === q.answer;
+      if (isCorrect) {
+        quizScore++;
+        document.getElementById('quiz-score-badge').innerText = `${quizScore} / ${QUIZ_DATA.length}`;
+      }
+
+      // Visual feedback on buttons
+      optionButtons.forEach((btn, idx) => {
+        if (idx === q.answer) {
+          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 font-bold text-sm flex items-center justify-between";
+          btn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-600";
+        } else if (idx === selectedIdx && !isCorrect) {
+          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-800 font-bold text-sm flex items-center justify-between";
+          btn.querySelector('i').className = "fa-solid fa-circle-xmark text-rose-600";
+        } else {
+          btn.classList.add('opacity-50');
+        }
+      });
+
+      // Explanation box
+      const feedback = document.getElementById('quiz-feedback-box');
+      feedback.classList.remove('hidden');
+      if (isCorrect) {
+        feedback.className = "p-4 rounded-xl text-sm font-medium mb-4 bg-emerald-50 text-emerald-800 border border-emerald-200";
+        feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1.5"></i><strong>正確！</strong> ${q.explain}`;
+      } else {
+        feedback.className = "p-4 rounded-xl text-sm font-medium mb-4 bg-rose-50 text-rose-800 border border-rose-200";
+        feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1.5"></i><strong>答錯囉！</strong> 正確解答是：${q.options[q.answer]}。<br><span class="text-xs text-rose-700 mt-1 block">${q.explain}</span>`;
+      }
+
+      document.getElementById('quiz-next-btn').classList.remove('hidden');
+    }
+
+    function nextQuizQuestion() {
+      if (quizCurrentIndex < QUIZ_DATA.length - 1) {
+        quizCurrentIndex++;
+        loadQuizQuestion();
+      } else {
+        // Show completion
+        document.getElementById('quiz-content-area').classList.add('hidden');
+        const completedArea = document.getElementById('quiz-completed-area');
+        completedArea.classList.remove('hidden');
+        document.getElementById('quiz-final-summary').innerText = `恭喜完成！你在 ${QUIZ_DATA.length} 道測驗題目中獲得了 ${quizScore} 分！`;
+      }
+    }
+
+    function restartQuiz() {
+      quizCurrentIndex = 0;
+      quizScore = 0;
+      document.getElementById('quiz-score-badge').innerText = `0 / ${QUIZ_DATA.length}`;
+      document.getElementById('quiz-content-area').classList.remove('hidden');
+      document.getElementById('quiz-completed-area').classList.add('hidden');
+      loadQuizQuestion();
+    }
+  </script>
+</body>
+</html>
