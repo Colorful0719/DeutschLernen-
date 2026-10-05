@@ -45,3 +45,29 @@ main{font-size:16px;line-height:1.85}main p{line-height:1.85}main .text-xs{font-
 #tripsub-groups .from-sky-50 .bg-sky-600,#tripsub-groups .from-emerald-50 .bg-emerald-600{background:#0c4a61!important;color:#fff!important}
 #tripsub-groups .from-sky-50 p,#tripsub-groups .from-emerald-50 p{color:#405c68!important}
 #itinerary-timeline-container .bg-tad-navy.text-amber-300{background:#0c4a61!important;color:#fff!important;font-size:15px;line-height:1.6}
+/* One-row navigation at every viewport and zoom level. */
+header nav{flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none;-ms-overflow-style:none}
+header nav::-webkit-scrollbar{display:none!important;height:0!important}
+header nav .nav-btn{flex:0 0 auto!important;white-space:nowrap!important}
+/* Keep the horizontal navigation scrollbar visible. */
+header nav{scrollbar-width:thin!important;scrollbar-color:#abdff0 #ffffff25!important;-ms-overflow-style:auto!important}
+header nav::-webkit-scrollbar{display:block!important;height:7px!important}
+header nav::-webkit-scrollbar-track{background:#ffffff25!important;border-radius:8px}
+header nav::-webkit-scrollbar-thumb{background:#abdff0!important;border-radius:8px}
+/* Date/time grammar notes: readable light surface. */
+#tab-datetime>.bg-gradient-to-br{background:#f1f8fa!important;color:#173e4e!important;border-color:#bfd5df!important}
+#tab-datetime>.bg-gradient-to-br>div>h3{color:#0c4a61!important}
+#tab-datetime>.bg-gradient-to-br>p{color:#405c68!important}
+/* Header: light background with dark, readable title and navigation. */
+header{background:#f1f8fa!important;border-bottom:1px solid #cbdde5!important}
+header .university-title.font-black.text-tad-navy{color:#0c4a61!important}
+header .text-slate-500{color:#405c68!important}
+header nav{border-top-color:#cbdde5!important;scrollbar-color:#0c4a61 #dcebf1!important}
+header .nav-btn{color:#173e4e!important}
+header .nav-btn:hover{background:#e2deda!important;color:#0c4a61!important}
+header .nav-btn[aria-current=page],header .nav-btn[aria-current=page]:hover{background:#0c4a61!important;color:#fff!important}
+header .nav-btn:focus-visible{outline-color:#0c4a61!important}
+header nav::-webkit-scrollbar-track{background:#dcebf1!important}
+header nav::-webkit-scrollbar-thumb{background:#0c4a61!important}
+header{background:#fff!important}header .university-title.font-black.text-tad-navy{color:#0c4a61!important;opacity:1!important}
+footer .font-black.text-lg.text-white{color:#fff!important;opacity:1!important}
