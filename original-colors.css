@@ -1,0 +1,10 @@
+
+:root{--ink:#0d3b66;--accent:#ff6a00;--paper:#f8fafc}
+body{background:#f8fafc!important;color:#1e293b!important}
+header{background:#ffffffF2!important}header .university-title.font-black.text-tad-navy{color:#0d3b66!important}header .text-slate-500{color:#64748b!important}header>div>div>div:first-child{background:#ff6a00!important;color:white!important}
+header .nav-btn{color:#475569!important;background:transparent!important}header .nav-btn[aria-current=page]{background:#ff6a00!important;color:white!important}header .nav-btn:hover{background:#f1f5f9!important;color:#0d3b66!important}header .nav-btn[aria-current=page]:hover{background:#e65100!important;color:white!important}header .nav-btn i.fa-solid{background:transparent!important;color:inherit!important}
+.study-hero{background:#0d3b66;color:#fff}.study-hero:after{background:linear-gradient(90deg,#0d3b66ee,#0d3b6655 70%,#0d3b6622)}.study-hero .eyebrow{color:#fed7aa}.hero-actions button{background:#ff6a00;color:#fff}.hero-actions button+button{background:#0d3b66;color:#fff;border-color:#fff8}
+.study-card h2,.destination-heading h2,.section-heading h1{color:#0d3b66}.study-card{background:white}.study-card a,.text-action,.section-heading .eyebrow,.destination-heading .eyebrow{color:#e65100}.destination-heading:after{background:#ff6a00}.study-grid .study-card{border-top-color:#ff6a00}.learning-path button{background:#fff7ed;color:#0d3b66;border-color:#fed7aa}.german-example{background:#f0f9ff;color:#0d3b66;border-left-color:#0284c7}.study-table th{background:#f0f9ff;color:#0d3b66}#tab-reminders>.grid>div{background:#fff;border-top-color:#ff6a00}
+#tripsub-schedule thead tr:first-child,#tripsub-schedule thead tr:first-child th{background:#0d3b66!important;color:white!important;border-color:#334155!important}
+#flashcard-back{background:#0d3b66;color:white}#flashcard-back .text-slate-400,#flashcard-back h4{color:#e2e8f0!important}
+footer{background:#0f172a!important;color:#fff!important}footer p{color:#cbd5e1!important}

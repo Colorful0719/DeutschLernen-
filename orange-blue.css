@@ -1,0 +1,37 @@
+/* Restore the original DeutschLernen orange and blue palette. */
+:root{--ink:#0d3b66;--accent:#ff6a00;--paper:#f8fafc}
+body{background:#f8fafc!important;color:#334155!important}
+body>aside:first-of-type{background:#0d3b66!important;color:#fff!important;border-bottom:0}
+body>aside:first-of-type span,body>aside:first-of-type a{color:#fff!important}
+header{border-bottom-color:#dce6ef!important}
+header .text-tad-navy,header .font-black.text-xl{color:#0d3b66!important}
+header .text-tad-orange{color:#ff6a00!important}
+header>div>div>div:first-child{background:#ff6a00!important}
+header .nav-btn{color:#0d3b66!important}
+header .nav-btn[aria-current=page],header .nav-btn:hover{color:#e65100!important}
+header .nav-btn[aria-current=page]:after{background:#ff6a00}
+.hero-actions button{background:#ff6a00;border-color:#ff6a00}
+.hero-actions button+button{background:#0d3b6666;border-color:#ffffffbb}
+.hero-actions button:hover{background:#e65100}
+.destination-heading h2,.study-card h2,.section-heading h1,#tab-reminders h2{color:#0d3b66!important}
+.destination-heading .eyebrow,.section-heading .eyebrow,.study-card a,.text-action{color:#d95500}
+.destination-heading:after{background:#ff6a00}
+.study-grid .study-card{border-top-color:#ff6a00}
+.study-grid .study-card:nth-child(2),.study-grid .study-card:nth-child(4){border-top-color:#0d3b66}
+.study-grid .study-card:nth-child(3){border-top-color:#0284c7}
+.learning-path button{background:#f0f9ff;color:#0d3b66;border-color:#d9e6ef}
+.learning-path button:hover{border-color:#ff6a00;color:#d95500}
+.study-table th{background:#edf5fb;color:#0d3b66}
+.german-example{background:#f0f9ff;color:#0d3b66;border-left-color:#0284c7}
+.outcome-row input{accent-color:#ff6a00}#outcome-progress{color:#0d3b66}
+main .text-tad-navy{color:#0d3b66!important}main .text-tad-orange{color:#e65100!important}
+main .bg-tad-orange{background:#ff6a00!important}main .bg-tad-navy{background:#0d3b66!important}
+main>section>.bg-gradient-to-r{background:#edf5fb!important;border-left-color:#ff6a00}
+main>section>.bg-gradient-to-r h1{color:#0d3b66!important}
+#tab-reminders>.grid>div{border-top-color:#ff6a00!important}
+#tab-reminders>.grid>div:nth-child(even){border-top-color:#0d3b66!important}
+#tab-reminders>.grid>div:nth-child(3){border-top-color:#0284c7!important}
+footer{background:#0d3b66!important;color:#fff!important;border-top:0}
+footer .text-white,footer .text-slate-400,footer .text-slate-300,footer p{color:#e4eef7!important}
+footer .bg-slate-800{background:#08233d!important;color:#fff!important;border-color:#315878!important}
+@media print{body,footer{background:white!important}footer p{color:black!important}}

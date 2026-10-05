@@ -1,0 +1,30 @@
+/* Typography and palette inspired by the supplied domestic travel site. */
+:root{--ink:#34466f;--accent:#e95d00;--paper:#fff;--travel-orange:#e95d00;--travel-blue:#34466f;--travel-sky:#d9f0f8}
+body,button,input,select,textarea{font-family:"微軟正黑體","Microsoft JhengHei",sans-serif!important}
+body{background:#fff!important;color:#212529!important;font-weight:400}
+body>aside:first-of-type{background:#34466f!important}
+header{background:#e95d00!important;border-bottom:0!important;backdrop-filter:none!important}
+header>div{gap:12px;padding-top:18px;padding-bottom:12px}
+header>div>div>div:first-child{background:#ffffff20!important;box-shadow:none!important}
+header .university-title{color:#fff!important;font-size:29px!important;font-weight:700!important;line-height:1.5;letter-spacing:.035em}
+header .text-slate-500{color:#fff!important;font-size:13px;font-weight:400}
+header nav{border-top:1px solid #ffffff45}
+header .nav-btn,header .nav-btn:hover,header .nav-btn[aria-current=page]{color:#fff!important;font-weight:700!important}
+header .nav-btn[aria-current=page]{background:#34466f!important;border-radius:4px!important}
+header .nav-btn[aria-current=page]:after{background:#fff;height:2px}
+header .nav-btn i{color:inherit!important}
+.destination-heading h2,.study-card h2,.section-heading h1,#tab-reminders h2,main .text-tad-navy{color:#34466f!important}
+.destination-heading .eyebrow,.section-heading .eyebrow,.study-card a,.text-action{color:#c44d00}
+.hero-actions button,main .bg-tad-orange{background:#e95d00!important;border-color:#e95d00}
+.hero-actions button+button{background:#34466f!important;border-color:#ffffffb0}
+.study-hero:after{background:linear-gradient(90deg,#34466ff0,#34466f60 65%,#34466f20)}
+.study-grid .study-card{border-top-color:#e95d00}.study-grid .study-card:nth-child(even){border-top-color:#34466f}
+.study-table th,.german-example{background:#eaf6fb;color:#34466f}
+.learning-path button{background:#eaf6fb;color:#34466f}
+main>section>.bg-gradient-to-r{background:#eaf6fb!important;border-left-color:#e95d00}
+main>section>.bg-gradient-to-r h1{color:#34466f!important}
+#tab-reminders>.grid>div{border-top-color:#e95d00!important}#tab-reminders>.grid>div:nth-child(even){border-top-color:#34466f!important}
+footer{background:#34466f!important}footer .text-white,footer .text-slate-400,footer .text-slate-300,footer p{color:#fff!important}
+@media(max-width:640px){header .university-title{font-size:21px!important;letter-spacing:0;line-height:1.55}header>div>div{align-items:flex-start!important}header>div>div>div:first-child{margin-top:5px}header .text-slate-500{font-size:12px}header>div{padding-top:12px;padding-bottom:10px}}
+@media print{header,footer{background:white!important}}
+header .university-title.font-black.text-tad-navy{color:#fff!important;font-weight:700!important}@media(max-width:640px){header .university-title.font-black.text-tad-navy{font-size:21px!important}}

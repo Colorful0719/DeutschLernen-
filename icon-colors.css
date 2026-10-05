@@ -1,0 +1,14 @@
+/* Quiet icon accents on the existing orange and blue interface. */
+header #tab-btn-overview{--icon-color:#405777}header #tab-btn-alphabet{--icon-color:#486d89}header #tab-btn-numbers{--icon-color:#62758c}header #tab-btn-datetime{--icon-color:#74647e}header #tab-btn-directions{--icon-color:#507c7c}header #tab-btn-trip{--icon-color:#47648f}header #tab-btn-reminders{--icon-color:#887344}header #tab-btn-vocab{--icon-color:#657759}header #tab-btn-dialogue{--icon-color:#548079}header #tab-btn-grammar{--icon-color:#6b6689}header #tab-btn-outcomes{--icon-color:#567587}header #tab-btn-quiz{--icon-color:#88636a}
+header .nav-btn i.fa-solid{color:var(--icon-color,#486d89)!important;background:#fff7f0;display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;font-size:12px;flex-shrink:0;vertical-align:middle;margin-right:6px}
+header .nav-btn[aria-current=page] i.fa-solid{background:#f3f7fb}
+header>div>div>div:first-child i{color:#dcecf2!important}
+main i.fa-volume-high,body>aside:nth-of-type(2) i.fa-volume-high{color:#507c8c!important}
+main i.fa-camera,main i.fa-camera-slash{color:#ddedf2!important}
+main i.fa-suitcase-rolling,main i.fa-shirt,main i.fa-vest{color:#608475!important}
+main i.fa-phone-volume{color:#e3edf6!important}
+main i.fa-plug,main i.fa-shoe-prints{color:#697d89!important}
+main i.fa-cookie-bite,main i.fa-triangle-exclamation,main i.fa-circle-exclamation{color:#96734b!important}
+main i.fa-person-circle-check,main i.fa-circle-check{color:#68857b!important}
+main i.fa-train,main i.fa-plane-departure,main i.fa-signs-post{color:#5e7b98!important}
+@media(max-width:640px){header .nav-btn i.fa-solid{width:23px;height:23px;font-size:11px;margin-right:5px}}
