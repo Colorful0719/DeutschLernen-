@@ -71,3 +71,21 @@ header nav::-webkit-scrollbar-track{background:#dcebf1!important}
 header nav::-webkit-scrollbar-thumb{background:#0c4a61!important}
 header{background:#fff!important}header .university-title.font-black.text-tad-navy{color:#0c4a61!important;opacity:1!important}
 footer .font-black.text-lg.text-white{color:#fff!important;opacity:1!important}
+
+/* Daily itinerary: scan times separately from activities. */
+#itinerary-timeline-container .daily-card{background:#fff;border:1px solid #cbdde5;border-radius:20px;overflow:hidden;color:#173e4e;box-shadow:0 3px 12px #0c4a6108}
+.daily-card-heading{padding:22px 24px;background:#f1f8fa;border-bottom:1px solid #dcebf1}
+.daily-date{display:inline-block;background:#0c4a61;color:#fff;font-size:16px;font-weight:700;padding:6px 12px;border-radius:9px;margin-bottom:12px}
+.daily-card-heading h4{font-size:20px;line-height:1.6;color:#0c4a61;margin:0 0 10px;font-weight:700}
+.daily-card-heading h4 i{color:#c85423;margin-right:6px}
+.daily-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;line-height:1.7;color:#405c68}
+.daily-events{list-style:none;margin:0;padding:10px 24px}
+.daily-event{display:grid;grid-template-columns:125px minmax(0,1fr);gap:18px;padding:13px 0;font-size:16px;line-height:1.85;border-bottom:1px solid #e4eef2;overflow-wrap:anywhere}
+.daily-event:last-child{border-bottom:0}
+.daily-event-time{color:#0c4a61;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.daily-event-untimed{grid-template-columns:minmax(0,1fr)}
+.daily-transport{margin:0 24px 24px;padding:16px 18px;background:#fff6ef;border:1px solid #f2d8c5;border-radius:12px;color:#593c2b}
+.daily-transport h5{margin:0 0 8px;font-size:16px;font-weight:700;color:#824120}
+.daily-transport ul{list-style:disc;padding-left:20px;margin:0;font-size:15px;line-height:1.9}
+.daily-transport li+li{margin-top:5px}
+@media(max-width:480px){.daily-card-heading{padding:18px 16px}.daily-card-heading h4{font-size:18px}.daily-events{padding:6px 16px}.daily-event{grid-template-columns:106px minmax(0,1fr);gap:10px;font-size:16px}.daily-event-time{font-size:14px}.daily-event-untimed{grid-template-columns:1fr}.daily-transport{margin:0 16px 18px;padding:14px}.daily-meta{gap:6px 12px}}
