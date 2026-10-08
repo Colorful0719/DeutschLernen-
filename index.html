@@ -7,13 +7,13 @@
   <meta name="description" content="漢堡海外教育見習，德語練習、參訪行程與成果作業。">
 
   <!-- Tailwind CSS CDN -->
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="enhancements.css?v=readability2">
-  <link rel="stylesheet" href="tourism.css?v=readability2">
-  <link rel="stylesheet" href="scuba.css?v=20261006-daily">
+  <link rel="stylesheet" href="https://colorful0719.github.io/DeutschLernen-/styles.css">
+  <link rel="stylesheet" href="https://colorful0719.github.io/DeutschLernen-/enhancements.css?v=readability2">
+  <link rel="stylesheet" href="https://colorful0719.github.io/DeutschLernen-/tourism.css?v=readability2">
+  <link rel="stylesheet" href="https://colorful0719.github.io/DeutschLernen-/scuba.css?v=20261006-daily">
 
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="vendor/icons.css">
+  <link rel="stylesheet" href="https://colorful0719.github.io/DeutschLernen-/vendor/icons.css">
   <!-- Google Fonts: Noto Sans TC & Inter -->
   
   
@@ -166,7 +166,7 @@
 
 
 <section id="tab-overview" class="space-y-6 hidden">
- <div class="study-hero"><img class="destination-photo" src="assets/hamburg-panorama.jpg" alt="漢堡倉庫城與港區全景" width="4388" height="1080" fetchpriority="high"><p class="eyebrow">HAMBURG · 海外教育見習</p><h1 lang="de">Hallo, Hamburg!</h1><div class="hero-actions"><button onclick="switchTab('dialogue')">先練幾句德語</button><button onclick="switchTab('outcomes')">成果作業</button></div><span class="destination-caption">HAMBURG / SPEICHERSTADT</span></div>
+ <div class="study-hero"><img class="destination-photo" src="https://colorful0719.github.io/DeutschLernen-/assets/hamburg-panorama.jpg" alt="漢堡倉庫城與港區全景" width="4388" height="1080" fetchpriority="high"><p class="eyebrow">HAMBURG · 海外教育見習</p><h1 lang="de">Hallo, Hamburg!</h1><div class="hero-actions"><button onclick="switchTab('dialogue')">先練幾句德語</button><button onclick="switchTab('outcomes')">成果作業</button></div><span class="destination-caption">HAMBURG / SPEICHERSTADT</span></div>
  
  <div class="destination-heading"><p class="eyebrow">EDUCATION &amp; EXPLORATION</p><h2>參訪與城市探索</h2></div>
  <div class="study-grid">
@@ -2026,27 +2026,79 @@
     try { userTasks = JSON.parse(localStorage.getItem('deutsch_tasks_state_v4')) || {}; if (typeof userTasks !== 'object' || Array.isArray(userTasks)) userTasks = {}; } catch {}
 
     /* Web Speech API helper */
+    let speechRequest = 0;
+    let activeGermanUtterance = null;
+    let speechStartTimer = null;
+    let germanVoices = [];
+    function setSpeechStatus(message) {
+      const status = document.getElementById('audio-status');
+      if (status) status.textContent = message;
+    }
+    function refreshGermanVoices() {
+      if (!('speechSynthesis' in window)) return;
+      germanVoices = window.speechSynthesis.getVoices().filter(v => /^de(?:[-_]|$)/i.test(v.lang));
+    }
+    function cancelGermanSpeech() {
+      speechRequest++;
+      clearTimeout(speechStartTimer);
+      activeGermanUtterance = null;
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    }
     function speakGerman(text, onEndCallback = null) {
-      if (!('speechSynthesis' in window)) { document.getElementById('audio-status').textContent='此瀏覽器不支援語音朗讀，請閱讀德文與中文對照。'; if (onEndCallback) onEndCallback(); return; }
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'de-DE';
-
-      const voices = window.speechSynthesis.getVoices();
-      const deVoice = voices.find(v => v.lang.startsWith('de'));
-      if (deVoice) utterance.voice = deVoice;
-      document.getElementById('audio-status').textContent = deVoice ? '使用裝置德語語音朗讀' : '裝置尚未提供德語語音，發音品質可能受影響。';
-
-      const speedSelect = document.getElementById('playbackRate');
-      utterance.rate = speedSelect ? parseFloat(speedSelect.value) : 0.9;
-      utterance.pitch = 1.0;
-
-      if (onEndCallback) {
-        utterance.onend = onEndCallback;
-        utterance.onerror = () => { document.getElementById('audio-status').textContent='語音播放中斷或無法使用。'; onEndCallback(); };
+      if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+        setSpeechStatus('此瀏覽器不支援朗讀，請用 Safari 或 Chrome 開啟網頁');
+        return;
       }
-      window.speechSynthesis.speak(utterance);
+      cancelGermanSpeech();
+      const request = speechRequest;
+      const synth = window.speechSynthesis;
+      refreshGermanVoices();
+      const utterance = new SpeechSynthesisUtterance(text);
+      activeGermanUtterance = utterance;
+      utterance.lang = 'de-DE';
+      const voice = germanVoices.find(v => /^de[-_]DE$/i.test(v.lang) && v.localService)
+        || germanVoices.find(v => /^de[-_]DE$/i.test(v.lang)) || germanVoices[0];
+      if (voice) utterance.voice = voice;
+      const speed = document.getElementById('playbackRate');
+      utterance.rate = speed ? parseFloat(speed.value) : 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      setSpeechStatus('正在啟動德語朗讀');
+      utterance.onstart = () => {
+        if (request !== speechRequest) return;
+        clearTimeout(speechStartTimer);
+        setSpeechStatus('正在朗讀德語');
+      };
+      utterance.onend = () => {
+        if (request !== speechRequest) return;
+        clearTimeout(speechStartTimer);
+        activeGermanUtterance = null;
+        setSpeechStatus('朗讀完成');
+        if (onEndCallback) onEndCallback();
+      };
+      utterance.onerror = event => {
+        if (request !== speechRequest) return;
+        clearTimeout(speechStartTimer);
+        activeGermanUtterance = null;
+        if (typeof stopAllAudio === 'function') stopAllAudio(true);
+        setSpeechStatus(event.error === 'language-unavailable' || event.error === 'voice-unavailable'
+          ? '裝置沒有可用的德語語音，請在手機語音設定下載德語後重新開啟網頁'
+          : '朗讀未能播放，請用 Safari 或 Chrome 開啟，確認媒體音量後再點一次朗讀');
+      };
+      speechStartTimer = setTimeout(() => {
+        if (request !== speechRequest || activeGermanUtterance !== utterance) return;
+        setSpeechStatus('尚未開始播放，請確認媒體音量，使用 Safari 或 Chrome，並在手機語音設定下載德語後再試');
+      }, 5000);
+      // Keep this call synchronous with the user's tap on mobile browsers.
+      try {
+        if (synth.paused) synth.resume();
+        synth.speak(utterance);
+      } catch {
+        clearTimeout(speechStartTimer);
+        cancelGermanSpeech();
+        if (typeof stopAllAudio === 'function') stopAllAudio(true);
+        setSpeechStatus('朗讀無法啟動，請用 Safari 或 Chrome 開啟網頁後再試');
+      }
     }
 
     function testSpeech() {
@@ -2075,7 +2127,8 @@
       loadQuizQuestion();
 
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+        refreshGermanVoices();
+        window.speechSynthesis.addEventListener('voiceschanged', refreshGermanVoices);
       }
     });
 
@@ -3105,6 +3158,15 @@
       loadQuizQuestion();
     }
   </script>
-<script src="enhancements.js"></script>
+<script src="https://colorful0719.github.io/DeutschLernen-/enhancements.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const oldStop = window.stopAllAudio;
+  if (typeof oldStop === 'function') window.stopAllAudio = function(silent=false) {
+    cancelGermanSpeech();
+    oldStop(silent);
+  };
+});
+</script>
 </body>
 </html>
